@@ -65,13 +65,13 @@ public class Board {
 				}
 				
 				// Check tetromino does not exceed board boundaries
-				if((tetromino.getXPosition() + i) < height) {
+				if((tetromino.getXPosition() + i) < 0) {
 					return false;
-				} else if((tetromino.getXPosition() + i) > height) {
+				} else if((tetromino.getXPosition() + i) > width - 1) {
 					return false;
-				} else if((tetromino.getYPosition() + j) < width) {
+				} else if((tetromino.getYPosition() + j) < 0) {
 					return false;
-				} else if((tetromino.getYPosition() + j) > width) {
+				} else if((tetromino.getYPosition() + j) > height - 1) {
 					return false;
 				}
 				
@@ -98,7 +98,7 @@ public class Board {
 				if(tetromino.getTetrominoRepresentation()[i][j] == 0) {
 					continue;
 				} else {
-					board[i + tetromino.getXPosition()][j + tetromino.getYPosition()] = tetromino.getType();
+					board[i + tetromino.getYPosition()][j + tetromino.getXPosition()] = tetromino.getType();
 				}
 				
 			}
