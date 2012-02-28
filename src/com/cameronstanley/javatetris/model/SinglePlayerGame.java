@@ -120,7 +120,7 @@ public class SinglePlayerGame {
 			
 			// Check that the game is not over; a piece being placed on the
 			// top row means the game is over
-			if(activeTetromino.getYPosition() == 0) {
+			if(activeTetromino.getYPosition() <= 0) {
 				
 				// Game is over
 				isActive = false;
@@ -139,6 +139,51 @@ public class SinglePlayerGame {
 			
 		}		
 		
+	}
+	
+	public void rotateActiveTetromino() {
+		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
+				activeTetromino.getRotation(),
+				activeTetromino.getXPosition(),
+				activeTetromino.getYPosition());
+		movedTetromino.rotateForward();
+		
+		if(board.isValidTetrominoPosition(movedTetromino)) {
+			activeTetromino = movedTetromino;
+		}
+	}
+	
+	public void moveActiveTetrominoRight() {
+		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
+				activeTetromino.getRotation(),
+				activeTetromino.getXPosition() + 1,
+				activeTetromino.getYPosition());
+		
+		if(board.isValidTetrominoPosition(movedTetromino)) {
+			activeTetromino = movedTetromino;
+		}
+	}
+	
+	public void moveActiveTetrominoLeft() {
+		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
+				activeTetromino.getRotation(), 
+				activeTetromino.getXPosition() - 1,
+				activeTetromino.getYPosition());
+		
+		if(board.isValidTetrominoPosition(movedTetromino)) {
+			activeTetromino = movedTetromino;
+		}
+	}
+	
+	public void moveActiveTetrominoDown() {
+		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
+				activeTetromino.getRotation(),
+				activeTetromino.getXPosition(),
+				activeTetromino.getYPosition() + 1);
+		
+		if(board.isValidTetrominoPosition(movedTetromino)) {
+			activeTetromino = movedTetromino;
+		}
 	}
 	
 	/**

@@ -65,13 +65,13 @@ public class Board {
 				}
 				
 				// Check tetromino does not exceed board boundaries
-				if((tetromino.getXPosition() + i) < 0) {
+				if((tetromino.getXPosition() + j) < 0) {
 					return false;
-				} else if((tetromino.getXPosition() + i) > width - 1) {
+				} else if((tetromino.getXPosition() + j) > width - 1) {
 					return false;
-				} else if((tetromino.getYPosition() + j) < 0) {
-					return false;
-				} else if((tetromino.getYPosition() + j) > height - 1) {
+				} else if((tetromino.getYPosition() + i) < 0) {
+					continue;	// Allowed to fill over the top of the board
+				} else if((tetromino.getYPosition() + i) > height - 1) {
 					return false;
 				}
 				
@@ -150,8 +150,10 @@ public class Board {
 	 * @param row The row at which the shifting will begin.
 	 */
 	public void clearLine(int row) {
-		for(int i = row; i >= 0; i++) {
-			board[i] = board[i - 1];
+		for(int i = row; i > 0; i--) {
+			for(int j = 0; j < width; j++) {
+				board[i][j] = board[i - 1][j];
+			}
 		}
 	}
 	
