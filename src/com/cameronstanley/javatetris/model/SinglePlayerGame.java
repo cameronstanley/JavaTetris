@@ -186,6 +186,22 @@ public class SinglePlayerGame {
 		}
 	}
 	
+	public void hardDropActiveTetromino() {
+		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
+				activeTetromino.getRotation(),
+				activeTetromino.getXPosition(),
+				activeTetromino.getYPosition() + 1);
+		
+		while(true) {
+			if(board.isValidTetrominoPosition(movedTetromino)) {
+				activeTetromino.setYPosition(movedTetromino.getYPosition());
+				movedTetromino.setYPosition(movedTetromino.getYPosition() + 1);
+			} else {
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * Returns the board used for storing placed tetrominoes.
 	 * 

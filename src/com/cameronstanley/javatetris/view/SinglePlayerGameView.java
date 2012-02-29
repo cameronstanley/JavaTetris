@@ -33,21 +33,24 @@ public class SinglePlayerGameView {
 		renderBoardGrid();
 		renderBoard();
 		renderActiveTetromino();
+		renderTetrominoQueueOutline();
+		renderTetrominoQueueGrid();
+		renderTetrominoQueue();
 	}
 	
 	private void clear() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		GL11.glLineWidth(1.0f);
 	}
 	
 	private void renderBoardOutline() {		
 		GL11.glBegin(GL11.GL_LINE_STRIP);
-		GL11.glColor3f(1.0f, 1.0f, 1.0f);
+		GL11.glColor3f(0.0f, 0.0f, 0.0f);
 		GL11.glVertex2i(239, 60);
-		GL11.glVertex2i(239, 541);
-		GL11.glVertex2i(561, 541);
+		GL11.glVertex2i(239, 542);
+		GL11.glVertex2i(561, 542);
 		GL11.glVertex2i(561, 60);
-		GL11.glVertex2i(239, 60);
 		GL11.glEnd();
 	}
 
@@ -150,6 +153,76 @@ public class SinglePlayerGameView {
 					// Right
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 1);
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 24);
+					GL11.glEnd();
+				}
+			}
+		}
+	}
+	
+	private void renderTetrominoQueueOutline() {
+		GL11.glBegin(GL11.GL_LINE_STRIP);
+		GL11.glColor3f(0.0f, 0.0f, 0.0f);
+		GL11.glVertex2i(584, 60);
+		GL11.glVertex2i(584, 204);
+		GL11.glVertex2i(776, 204);
+		GL11.glVertex2i(776, 60);
+		GL11.glVertex2i(584, 60);
+		GL11.glEnd();
+	}
+	
+	private void renderTetrominoQueueGrid() {
+		for(int i = 1; i < 6; i++) {
+			GL11.glBegin(GL11.GL_LINES);
+			GL11.glColor3f(0.5f, 0.5f, 0.5f);
+			GL11.glVertex2i(584 + (i * 32), 60);
+			GL11.glVertex2i(584 + (i * 32), 203);
+			GL11.glEnd();
+		}
+		
+		for(int i = 1; i < 6; i++) {
+			GL11.glBegin(GL11.GL_LINES);
+			GL11.glColor3f(0.5f, 0.5f, 0.5f);
+			GL11.glVertex2i(584, 60 + (i * 24));
+			GL11.glVertex2i(776, 60 + (i * 24));
+			GL11.glEnd();
+		}
+	}
+	
+	private void renderTetrominoQueue() {
+		int[][] nextTetrominoRepresentation = singlePlayerGame.getTetrominoQueue().getTetrominoes().get(0).getTetrominoRepresentation();
+		
+		for(int i = 0; i < nextTetrominoRepresentation.length; i++) {
+			for(int j = 0; j < nextTetrominoRepresentation[i].length; j++) {
+				if(nextTetrominoRepresentation[i][j] == 1) {
+					GL11.glBegin(GL11.GL_QUADS);
+					Color nextTetrominoColor = getTetrominoColor(singlePlayerGame.getTetrominoQueue().getTetrominoes().get(0).getType());
+					GL11.glColor3f(nextTetrominoColor.getRed(), nextTetrominoColor.getGreen(), nextTetrominoColor.getBlue());
+					GL11.glVertex2i(584 + (j * 32) + 32, 84 + (i * 24));
+					GL11.glVertex2i(584 + (j * 32) + 32 + 32, 84 + (i * 24));
+					GL11.glVertex2i(584 + (j * 32) + 32 + 32, 84 + (i * 24) + 24);
+					GL11.glVertex2i(584 + (j * 32) + 32, 84 + (i * 24) + 24);
+					GL11.glEnd();
+					
+					// Shade top and left sides dark
+					GL11.glBegin(GL11.GL_LINES);
+					GL11.glColor3f(0, 0, 0);
+					// Left
+					GL11.glVertex2i(584 + (j * 32) + 32 + 1, 84 + (i * 24));
+					GL11.glVertex2i(584 + (j * 32) + 32 + 1, 84 + (i * 24) + 24);
+					// Top
+					GL11.glVertex2i(584 + (j * 32) + 32, 84 + (i * 24) + 1);
+					GL11.glVertex2i(584 + (j * 32) + 32 + 32, 84 + (i * 24) + 1);
+					GL11.glEnd();
+					
+					// Shade bottom and right sides light
+					GL11.glBegin(GL11.GL_LINES);
+					GL11.glColor3f(255, 255, 255);
+					// Bottom
+					GL11.glVertex2i(584 + (j * 32) + 32 + 1, 84 + (i * 24) + 24 - 1);
+					GL11.glVertex2i(584 + (j * 32) + 32 + 32 - 1, 84 + (i * 24) + 24 - 1);
+					// Right
+					GL11.glVertex2i(584 + (j * 32) + 32 + 32 - 1, 84 + (i * 24) + 1);
+					GL11.glVertex2i(584 + (j * 32) + 32 + 32- 1, 84 + (i * 24) + 24);
 					GL11.glEnd();
 				}
 			}
