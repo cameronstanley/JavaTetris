@@ -3,6 +3,7 @@ package com.cameronstanley.javatetris.view;
 import org.lwjgl.opengl.GL11;
 
 import com.cameronstanley.javatetris.model.SinglePlayerGame;
+import com.cameronstanley.javatetris.model.Tetromino;
 import com.cameronstanley.javatetris.model.TetrominoType;
 
 /**
@@ -32,6 +33,7 @@ public class SinglePlayerGameView {
 		renderBoardOutline();
 		renderBoardGrid();
 		renderBoard();
+		renderProjectedTetromino();
 		renderActiveTetromino();
 		renderTetrominoQueueOutline();
 		renderTetrominoQueueGrid();
@@ -150,6 +152,42 @@ public class SinglePlayerGameView {
 					// Bottom
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 1, 60 + (offsetY * 24) + (i * 24) + 24 - 1);
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 24 - 1);
+					// Right
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 1);
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 24);
+					GL11.glEnd();
+				}
+			}
+		}
+	}
+	
+	private void renderProjectedTetromino() {
+		Tetromino projectedTetromino = singlePlayerGame.generateProjectedTetromino();
+		int[][] activeTetrominoRepresentation = projectedTetromino.getTetrominoRepresentation();
+		int offsetX = projectedTetromino.getXPosition();
+		int offsetY = projectedTetromino.getYPosition();
+		
+		for(int i = 0; i < activeTetrominoRepresentation.length; i++) {
+			for(int j = 0; j < activeTetrominoRepresentation[i].length; j++) {
+				// Don't render squares that hang out over the top of the board
+				if(offsetY + i < 0) {
+					continue;
+				}
+				
+				if(activeTetrominoRepresentation[i][j] == 1) {
+					
+					GL11.glBegin(GL11.GL_LINES);
+					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getActiveTetromino().getType());
+					GL11.glColor3f(tetrominoColor.getRed(), tetrominoColor.getGreen(), tetrominoColor.getBlue());
+					// Left
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 1, 60 + (offsetY * 24) + (i * 24));
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 1, 60 + (offsetY * 24) + (i * 24) + 24);
+					// Top
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32), 60 + (offsetY * 24) + (i * 24) + 1);
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32, 60 + (offsetY * 24) + (i * 24) + 1);
+					// Bottom
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 1, 60 + (offsetY * 24) + (i * 24) + 24);
+					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 24);
 					// Right
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 1);
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32 - 1, 60 + (offsetY * 24) + (i * 24) + 24);

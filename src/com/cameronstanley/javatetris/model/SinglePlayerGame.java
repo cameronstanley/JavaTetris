@@ -202,6 +202,28 @@ public class SinglePlayerGame {
 		}
 	}
 	
+	public Tetromino generateProjectedTetromino() {
+		Tetromino projectedTetromino = new Tetromino(activeTetromino.getType(),
+				activeTetromino.getRotation(),
+				activeTetromino.getXPosition(),
+				activeTetromino.getYPosition());
+		
+		while(true) {
+			Tetromino tempTetromino = new Tetromino(projectedTetromino.getType(),
+					projectedTetromino.getRotation(),
+					projectedTetromino.getXPosition(),
+					projectedTetromino.getYPosition() + 1);
+			
+			if(board.isValidTetrominoPosition(tempTetromino)) {
+				projectedTetromino.setYPosition(tempTetromino.getYPosition());
+			} else {
+				break;
+			}
+		}
+		
+		return projectedTetromino;
+	}
+	
 	/**
 	 * Returns the board used for storing placed tetrominoes.
 	 * 
