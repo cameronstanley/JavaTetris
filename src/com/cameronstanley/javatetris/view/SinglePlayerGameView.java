@@ -1,6 +1,9 @@
 package com.cameronstanley.javatetris.view;
 
+import java.awt.Font;
+
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.TrueTypeFont;
 
 import com.cameronstanley.javatetris.model.SinglePlayerGame;
 import com.cameronstanley.javatetris.model.Tetromino;
@@ -12,12 +15,15 @@ import com.cameronstanley.javatetris.model.TetrominoType;
  * 
  * @author Cameron
  */
+@SuppressWarnings("deprecation")
 public class SinglePlayerGameView {
 	
 	/**
 	 * The single player game model to render.
 	 */
 	private SinglePlayerGame singlePlayerGame;
+	
+	private TrueTypeFont statisticsFont;
 	
 	/**
 	 * Creates and initializes a single player game view.
@@ -26,6 +32,8 @@ public class SinglePlayerGameView {
 	 */
 	public SinglePlayerGameView(SinglePlayerGame singlePlayerGame) {
 		this.singlePlayerGame = singlePlayerGame;
+		Font awtFont = new Font("Lucida Grande", Font.BOLD, 18);
+		statisticsFont = new TrueTypeFont(awtFont, true);
 	}
 	
 	public void render() {	
@@ -38,6 +46,7 @@ public class SinglePlayerGameView {
 		renderTetrominoQueueOutline();
 		renderTetrominoQueueGrid();
 		renderTetrominoQueue();
+		renderStats();
 	}
 	
 	private void clear() {
@@ -265,6 +274,30 @@ public class SinglePlayerGameView {
 				}
 			}
 		}
+	}
+	
+	private void renderStats() {
+		String paddedLevel = Integer.toString(singlePlayerGame.getLevel());
+		String paddedLines = Integer.toString(singlePlayerGame.getTotalLinesCleared());
+		String paddedScore = Long.toString(singlePlayerGame.getPlayer().getScore());
+		
+		for(int i = paddedLevel.length(); i < 2; i++) {
+			paddedLevel = "0" + paddedLevel;
+		}
+		
+		for(int i = paddedLines.length(); i < 6; i++) {
+			paddedLines = "0" + paddedLines;
+		}
+		
+		for(int i = paddedScore.length(); i < 10; i++) {
+			paddedScore = "0" + paddedScore;
+		}
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		statisticsFont.drawString(24, 60, "Level: " + paddedLevel);
+		statisticsFont.drawString(24, 90, "Score: " + paddedScore);
+		statisticsFont.drawString(24, 120, "Lines: " + paddedLines);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 	
 	private Color getTetrominoColor(TetrominoType tetrominoType) {

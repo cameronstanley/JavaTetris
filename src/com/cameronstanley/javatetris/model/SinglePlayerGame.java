@@ -23,10 +23,16 @@ public class SinglePlayerGame {
 	 */
 	private TetrominoQueue tetrominoQueue;
 	
+	private Player player;
+	
 	/**
 	 * The switch for representing the state of the game.
 	 */
 	private boolean isActive;
+	
+	private int level;
+	
+	private int totalLinesCleared;
 	
 	/**
 	 * Retains the amount of time since the state was last updated.
@@ -70,6 +76,9 @@ public class SinglePlayerGame {
 	public SinglePlayerGame() {
 		board = new Board(BOARDHEIGHT, BOARDWIDTH);
 		tetrominoQueue = new TetrominoQueue(TETROMINOQUEUESIZE, TETROMINOSTARTROTATION, TETROMINOSTARTX, TETROMINOSTARTY);
+		player = new Player();
+		level = 1;
+		totalLinesCleared = 0;
 		isActive = false;
 	}
 	
@@ -81,6 +90,9 @@ public class SinglePlayerGame {
 		tetrominoQueue.clear();
 		tetrominoQueue.fill();
 		activeTetromino = tetrominoQueue.nextTetromino();
+		player.setScore(0);
+		level = 1;
+		totalLinesCleared = 0;
 		isActive = true;
 		timeElapsed = 0;
 	}
@@ -133,7 +145,29 @@ public class SinglePlayerGame {
 				activeTetromino = tetrominoQueue.nextTetromino();
 				
 				// Clear any full rows on the board
-				board.clearFullLines();						// TODO: Use return value to increment player score
+				int linesCleared = board.clearFullLines();
+				totalLinesCleared += linesCleared;
+				
+				// Update player score
+				switch(linesCleared) {
+				case 1:
+					player.setScore(player.getScore() + (40 * level));
+					break;
+				case 2:
+					player.setScore(player.getScore() + (100 * level));
+					break;
+				case 3:
+					player.setScore(player.getScore() + (300 * level));
+					break;
+				case 4:
+					player.setScore(player.getScore() + (1200 * level));
+					break;
+				default:
+					break;
+				}
+				
+				// Update level
+				level = (totalLinesCleared / 10) + 1;
 				
 			}
 			
@@ -250,12 +284,24 @@ public class SinglePlayerGame {
 		return tetrominoQueue;
 	}
 	
+	public Player getPlayer() {
+		return player;
+	}
+	
 	/**
 	 * Returns the switch for representing the state of the game
 	 * @return The switch for representing the state of the game
 	 */
 	public boolean getIsActive() {
 		return isActive;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public int getTotalLinesCleared() {
+		return totalLinesCleared;
 	}
 	
 }
