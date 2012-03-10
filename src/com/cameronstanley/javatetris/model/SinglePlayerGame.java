@@ -105,13 +105,27 @@ public class SinglePlayerGame {
 	 * @param delta The elapsed time in milliseconds.
 	 */
 	public void updateState(long delta) {
+		// Reset the game if the active flag is false
 		if(!isActive) {
 			newGame();
 		}		
+	
+		// The level speed determines how many milliseconds must elapse before
+		// the game's state is updated. The time varies from 500 to 100 milliseconds,
+		// getting smaller as the level increases. The speed changes by 20 
+		// millisecond intervals until level 20, where it remains at 100 for
+		// any further level increases.
+		int levelSpeed;		
+		if(level > 20) {
+			levelSpeed = 100;
+		} else {
+			levelSpeed = 500 - ((level - 1) * 20); 
+		}
 		
-		// TODO: Implement levels with their own time that must elapse before a piece is moved
+		// Only update the game's state if the time elapsed is greater than the
+		// level speed
 		timeElapsed += delta;
-		if(timeElapsed < 500) {
+		if(timeElapsed < levelSpeed) {
 			return;
 		} else {
 			timeElapsed = 0;
@@ -148,7 +162,7 @@ public class SinglePlayerGame {
 				int linesCleared = board.clearFullLines();
 				totalLinesCleared += linesCleared;
 				
-				// Update player score
+				// Update player score depending on how many lines were cleared
 				switch(linesCleared) {
 				case 1:
 					player.setScore(player.getScore() + (40 * level));
@@ -166,8 +180,12 @@ public class SinglePlayerGame {
 					break;
 				}
 				
-				// Update level
-				level = (totalLinesCleared / 10) + 1;
+				// Update level; a maximum level of 99 is enforced
+				if (level > 99) {
+					level = 99;
+				} else {
+					level = (totalLinesCleared / 10) + 1;;
+				}
 				
 			}
 			

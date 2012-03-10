@@ -23,6 +23,9 @@ public class SinglePlayerGameView {
 	 */
 	private SinglePlayerGame singlePlayerGame;
 	
+	/**
+	 * The font used to render text dealing with game statistics.
+	 */
 	private TrueTypeFont statisticsFont;
 	
 	/**
@@ -36,6 +39,9 @@ public class SinglePlayerGameView {
 		statisticsFont = new TrueTypeFont(awtFont, true);
 	}
 	
+	/**
+	 * Calls all the rendering functions to display the view.
+	 */
 	public void render() {	
 		clear();
 		renderBoardOutline();
@@ -49,12 +55,18 @@ public class SinglePlayerGameView {
 		renderStats();
 	}
 	
+	/**
+	 * Clears the buffer.
+	 */
 	private void clear() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 		GL11.glLineWidth(1.0f);
 	}
 	
+	/**
+	 * Renders the outline of the board.
+	 */
 	private void renderBoardOutline() {		
 		GL11.glBegin(GL11.GL_LINE_STRIP);
 		GL11.glColor3f(0.0f, 0.0f, 0.0f);
@@ -65,6 +77,9 @@ public class SinglePlayerGameView {
 		GL11.glEnd();
 	}
 
+	/**
+	 * Renders the grid inside of the board outline.
+	 */
 	private void renderBoardGrid() {
 		for(int i = 1; i < singlePlayerGame.getBoard().getHeight(); i++) {
 			GL11.glBegin(GL11.GL_LINES);
@@ -83,6 +98,9 @@ public class SinglePlayerGameView {
 		}
 	}
 	
+	/**
+	 * Renders the state of the board.
+	 */
 	private void renderBoard() {
 		for(int i = 0; i < singlePlayerGame.getBoard().getBoard().length; i++) {
 			for(int j = 0; j < singlePlayerGame.getBoard().getBoard()[i].length; j++) {
