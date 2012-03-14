@@ -85,7 +85,7 @@ public class SinglePlayerGame {
 	/**
 	 * Resets the state of the game.
 	 */
-	private void newGame() {
+	public void newGame() {
 		board.clearBoard();
 		tetrominoQueue.clear();
 		tetrominoQueue.fill();

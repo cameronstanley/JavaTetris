@@ -16,7 +16,7 @@ import com.cameronstanley.javatetris.model.TetrominoType;
  * @author Cameron
  */
 @SuppressWarnings("deprecation")
-public class SinglePlayerGameView {
+public class SinglePlayerGameView implements View {
 	
 	/**
 	 * The single player game model to render.

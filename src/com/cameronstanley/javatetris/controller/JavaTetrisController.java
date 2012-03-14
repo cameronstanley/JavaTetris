@@ -5,11 +5,15 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import com.cameronstanley.javatetris.model.Menu;
+import com.cameronstanley.javatetris.model.MenuItem;
 import com.cameronstanley.javatetris.model.SinglePlayerGame;
+import com.cameronstanley.javatetris.view.MainMenuView;
 import com.cameronstanley.javatetris.view.SinglePlayerGameView;
 
 public class JavaTetrisController {
 	
+	private static JavaTetrisControllerState state;
 	private final String WINDOWTITLE = "JavaTetris";
 	private final int WINDOWWIDTH = 800;
 	private final int WINDOWHEIGHT = 600;
@@ -36,18 +40,43 @@ public class JavaTetrisController {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		// Initialize models, input controllers, and views
+		// Application will start in the main menu
+		state = JavaTetrisControllerState.MAINMENU;
+		
+		// Create a main menu
+		Menu mainMenu = new Menu();
+		mainMenu.addMenuItem(new MenuItem("Single Player", true));
+		mainMenu.addMenuItem(new MenuItem("Continue", false));
+		mainMenu.addMenuItem(new MenuItem("Exit", true));
+		MainMenuInputController mainMenuInputController = new MainMenuInputController(mainMenu);
+		MainMenuView mainMenuView = new MainMenuView(mainMenu);
+		
+		// Create a single player game
 		SinglePlayerGame singlePlayerGame = new SinglePlayerGame();
 		SinglePlayerGameInputController singlePlayerGameInputController = new SinglePlayerGameInputController(singlePlayerGame);
 		SinglePlayerGameView singlePlayerGameView = new SinglePlayerGameView(singlePlayerGame);
-		Timer timer = new Timer();
 		
+		// Create and initialize a timer
+		Timer timer = new Timer();
 		timer.init();
 		
+		// Main loop
 		while (!Display.isCloseRequested()) {
-			singlePlayerGame.updateState(timer.getDelta());
-			singlePlayerGameInputController.pollInput();
-			singlePlayerGameView.render();
+			switch(state) {
+			case MAINMENU:
+				mainMenuInputController.pollInput();
+				mainMenuView.render();
+				break;
+			case STARTSINGLEPLAYERGAME:
+				singlePlayerGame.newGame();
+				state = JavaTetrisControllerState.PLAYSINGLEPLAYERGAME;
+				mainMenu.getMenuItems().get(1).setEnabled(true);
+			case PLAYSINGLEPLAYERGAME:
+				singlePlayerGame.updateState(timer.getDelta());
+				singlePlayerGameInputController.pollInput();
+				singlePlayerGameView.render();
+				break;
+			}
 			
 			Display.update();
 			Display.sync(TARGETFPS);
@@ -55,5 +84,12 @@ public class JavaTetrisController {
 		
 		Display.destroy();
 	}
+		
+	public static JavaTetrisControllerState getState() {
+		return state;
+	}
 	
+	public static void setState(JavaTetrisControllerState state) {
+		JavaTetrisController.state = state;
+	}
 }

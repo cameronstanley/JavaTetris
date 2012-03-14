@@ -29,6 +29,8 @@ public class SinglePlayerGameInputController {
 					}
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
 					singlePlayerGame.moveActiveTetrominoLeft();
+				} else if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
+					JavaTetrisController.setState(JavaTetrisControllerState.MAINMENU);
 				}
 			}
 		}
