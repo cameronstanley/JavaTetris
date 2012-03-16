@@ -66,11 +66,13 @@ public class JavaTetrisController {
 			case MAINMENU:
 				mainMenuInputController.pollInput();
 				mainMenuView.render();
+				timer.init();
 				break;
 			case STARTSINGLEPLAYERGAME:
 				singlePlayerGame.newGame();
 				state = JavaTetrisControllerState.PLAYSINGLEPLAYERGAME;
 				mainMenu.getMenuItems().get(1).setEnabled(true);
+				timer.init();
 			case PLAYSINGLEPLAYERGAME:
 				singlePlayerGame.updateState(timer.getDelta());
 				singlePlayerGameInputController.pollInput();

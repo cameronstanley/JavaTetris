@@ -15,7 +15,7 @@ public class MainMenuView implements View {
 	
 	private TrueTypeFont titleFont;
 	private TrueTypeFont menuItemFont;
-	
+		
 	public MainMenuView(Menu mainMenu) {
 		this.mainMenu = mainMenu;
 		
@@ -58,4 +58,5 @@ public class MainMenuView implements View {
 	private void renderSelector() {
 		menuItemFont.drawString(250, 300 + (mainMenu.getSelectedMenuItemIndex() * 50), ">");
 	}
+	
 }
