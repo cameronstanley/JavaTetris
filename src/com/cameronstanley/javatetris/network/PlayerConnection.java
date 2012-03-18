@@ -1,4 +1,4 @@
-package com.cameronstanley.javatetris.server;
+package com.cameronstanley.javatetris.network;
 
 import com.esotericsoftware.kryonet.Connection;
 

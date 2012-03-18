@@ -9,9 +9,9 @@ public class Board {
 
 	/**
 	 * A two-dimensional array with each element representing the 
-	 * contents of the square.
+	 * contents of the tile.
 	 */
-	private TetrominoType[][] board;
+	private TetrominoType[][] tiles;
 	
 	/**
 	 * The height or number of rows of the board.
@@ -30,7 +30,7 @@ public class Board {
 	 * @param width The width of the board or number of columns.
 	 */
 	public Board(int height, int width) {
-		board = new TetrominoType[height][width];
+		tiles = new TetrominoType[height][width];
 		this.height = height;
 		this.width = width;
 	}
@@ -38,10 +38,10 @@ public class Board {
 	/**
 	 * Sets every array element of the board to EMPTY.
 	 */
-	public void clearBoard() {
+	public void clear() {
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
-				board[i][j] = TetrominoType.EMPTY;
+				tiles[i][j] = TetrominoType.EMPTY;
 			}
 		}
 	}
@@ -76,7 +76,7 @@ public class Board {
 				}
 				
 				// Check board position is not currently occupied
-				if(board[i + tetromino.getYPosition()][j + tetromino.getXPosition()] != TetrominoType.EMPTY) {
+				if(tiles[i + tetromino.getYPosition()][j + tetromino.getXPosition()] != TetrominoType.EMPTY) {
 					return false;
 				}
 				
@@ -98,7 +98,7 @@ public class Board {
 				if(tetromino.getTetrominoRepresentation()[i][j] == 0) {
 					continue;
 				} else {
-					board[i + tetromino.getYPosition()][j + tetromino.getXPosition()] = tetromino.getType();
+					tiles[i + tetromino.getYPosition()][j + tetromino.getXPosition()] = tetromino.getType();
 				}
 				
 			}
@@ -136,7 +136,7 @@ public class Board {
 	 */
 	public boolean isLineFull(int row) {		
 		for(int i = 0; i < width; i++) {
-			if(board[row][i] == TetrominoType.EMPTY) {
+			if(tiles[row][i] == TetrominoType.EMPTY) {
 				return false;
 			}
 		}
@@ -152,7 +152,7 @@ public class Board {
 	public void clearLine(int row) {
 		for(int i = row; i > 0; i--) {
 			for(int j = 0; j < width; j++) {
-				board[i][j] = board[i - 1][j];
+				tiles[i][j] = tiles[i - 1][j];
 			}
 		}
 	}
@@ -164,8 +164,8 @@ public class Board {
 	 * @return A two-dimensional array of TetrominoTypes which represent
 	 * the type of the tetrominoes and empty positions.
 	 */
-	public TetrominoType[][] getBoard() {
-		return board;
+	public TetrominoType[][] getTiles() {
+		return tiles;
 	}
 	
 	/**

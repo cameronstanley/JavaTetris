@@ -81,7 +81,7 @@ public class SinglePlayerGameView implements View {
 	 * Renders the grid inside of the board outline.
 	 */
 	private void renderBoardGrid() {
-		for(int i = 1; i < singlePlayerGame.getBoard().getHeight(); i++) {
+		for(int i = 1; i < singlePlayerGame.getPlayer().getBoard().getHeight(); i++) {
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor3f(0.5f, 0.5f, 0.5f);
 			GL11.glVertex2i(240, 60 + (i * 24));
@@ -89,7 +89,7 @@ public class SinglePlayerGameView implements View {
 			GL11.glEnd();
 		}
 		
-		for(int i = 1; i < singlePlayerGame.getBoard().getWidth(); i++) {
+		for(int i = 1; i < singlePlayerGame.getPlayer().getBoard().getWidth(); i++) {
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor3f(0.5f, 0.5f, 0.5f);
 			GL11.glVertex2i(240 + (i * 32), 60);
@@ -102,11 +102,11 @@ public class SinglePlayerGameView implements View {
 	 * Renders the state of the board.
 	 */
 	private void renderBoard() {
-		for(int i = 0; i < singlePlayerGame.getBoard().getBoard().length; i++) {
-			for(int j = 0; j < singlePlayerGame.getBoard().getBoard()[i].length; j++) {
-				if(singlePlayerGame.getBoard().getBoard()[i][j] != TetrominoType.EMPTY) {			;
+		for(int i = 0; i < singlePlayerGame.getPlayer().getBoard().getTiles().length; i++) {
+			for(int j = 0; j < singlePlayerGame.getPlayer().getBoard().getTiles()[i].length; j++) {
+				if(singlePlayerGame.getPlayer().getBoard().getTiles()[i][j] != TetrominoType.EMPTY) {			;
 					GL11.glBegin(GL11.GL_QUADS);
-					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getBoard().getBoard()[i][j]);
+					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getPlayer().getBoard().getTiles()[i][j]);
 					GL11.glColor3f(tetrominoColor.getRed(), tetrominoColor.getGreen(), tetrominoColor.getBlue());
 					GL11.glVertex2i(240 + (j * 32), 60 + (i * 24));
 					GL11.glVertex2i(240 + (j * 32) + 32, 60 + (i * 24));
@@ -141,9 +141,9 @@ public class SinglePlayerGameView implements View {
 	}
 	
 	private void renderActiveTetromino() {
-		int[][] activeTetrominoRepresentation = singlePlayerGame.getActiveTetromino().getTetrominoRepresentation();
-		int offsetX = singlePlayerGame.getActiveTetromino().getXPosition();
-		int offsetY = singlePlayerGame.getActiveTetromino().getYPosition();
+		int[][] activeTetrominoRepresentation = singlePlayerGame.getPlayer().getActiveTetromino().getTetrominoRepresentation();
+		int offsetX = singlePlayerGame.getPlayer().getActiveTetromino().getXPosition();
+		int offsetY = singlePlayerGame.getPlayer().getActiveTetromino().getYPosition();
 		
 		for(int i = 0; i < activeTetrominoRepresentation.length; i++) {
 			for(int j = 0; j < activeTetrominoRepresentation[i].length; j++) {
@@ -154,7 +154,7 @@ public class SinglePlayerGameView implements View {
 				
 				if(activeTetrominoRepresentation[i][j] == 1) {
 					GL11.glBegin(GL11.GL_QUADS);
-					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getActiveTetromino().getType());
+					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getPlayer().getActiveTetromino().getType());
 					GL11.glColor3f(tetrominoColor.getRed(), tetrominoColor.getGreen(), tetrominoColor.getBlue());
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32), 60 + (offsetY * 24) + (i * 24));
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 32, 60 + (offsetY * 24) + (i * 24));
@@ -204,7 +204,7 @@ public class SinglePlayerGameView implements View {
 				if(activeTetrominoRepresentation[i][j] == 1) {
 					
 					GL11.glBegin(GL11.GL_LINES);
-					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getActiveTetromino().getType());
+					Color tetrominoColor = getTetrominoColor(singlePlayerGame.getPlayer().getActiveTetromino().getType());
 					GL11.glColor3f(tetrominoColor.getRed(), tetrominoColor.getGreen(), tetrominoColor.getBlue());
 					// Left
 					GL11.glVertex2i(240 + (offsetX * 32) + (j * 32) + 1, 60 + (offsetY * 24) + (i * 24));
@@ -254,13 +254,13 @@ public class SinglePlayerGameView implements View {
 	}
 	
 	private void renderTetrominoQueue() {
-		int[][] nextTetrominoRepresentation = singlePlayerGame.getTetrominoQueue().getTetrominoes().get(0).getTetrominoRepresentation();
+		int[][] nextTetrominoRepresentation = singlePlayerGame.getPlayer().getTetrominoQueue().getTetrominoes().get(0).getTetrominoRepresentation();
 		
 		for(int i = 0; i < nextTetrominoRepresentation.length; i++) {
 			for(int j = 0; j < nextTetrominoRepresentation[i].length; j++) {
 				if(nextTetrominoRepresentation[i][j] == 1) {
 					GL11.glBegin(GL11.GL_QUADS);
-					Color nextTetrominoColor = getTetrominoColor(singlePlayerGame.getTetrominoQueue().getTetrominoes().get(0).getType());
+					Color nextTetrominoColor = getTetrominoColor(singlePlayerGame.getPlayer().getTetrominoQueue().getTetrominoes().get(0).getType());
 					GL11.glColor3f(nextTetrominoColor.getRed(), nextTetrominoColor.getGreen(), nextTetrominoColor.getBlue());
 					GL11.glVertex2i(584 + (j * 32) + 32, 84 + (i * 24));
 					GL11.glVertex2i(584 + (j * 32) + 32 + 32, 84 + (i * 24));
@@ -295,8 +295,8 @@ public class SinglePlayerGameView implements View {
 	}
 	
 	private void renderStats() {
-		String paddedLevel = Integer.toString(singlePlayerGame.getLevel());
-		String paddedLines = Integer.toString(singlePlayerGame.getTotalLinesCleared());
+		String paddedLevel = Integer.toString(singlePlayerGame.getPlayer().getLevel());
+		String paddedLines = Integer.toString(singlePlayerGame.getPlayer().getTotalLinesCleared());
 		String paddedScore = Long.toString(singlePlayerGame.getPlayer().getScore());
 		
 		for(int i = paddedLevel.length(); i < 2; i++) {

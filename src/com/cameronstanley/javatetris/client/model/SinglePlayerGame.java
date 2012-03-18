@@ -8,31 +8,12 @@ package com.cameronstanley.javatetris.client.model;
  */
 public class SinglePlayerGame {
 
-	/**
-	 * The board used for storing placed tetrominoes.
-	 */
-	private Board board;
-	
-	/**
-	 * The active tetromino being controller by the player.
-	 */
-	private Tetromino activeTetromino;
-	
-	/**
-	 * The queue of tetrominoes that will be played.
-	 */
-	private TetrominoQueue tetrominoQueue;
-	
 	private Player player;
 	
 	/**
 	 * The switch for representing the state of the game.
 	 */
 	private boolean isActive;
-	
-	private int level;
-	
-	private int totalLinesCleared;
 	
 	/**
 	 * Retains the amount of time since the state was last updated.
@@ -74,11 +55,9 @@ public class SinglePlayerGame {
 	 * Creates and initializes a single player game.
 	 */
 	public SinglePlayerGame() {
-		board = new Board(BOARDHEIGHT, BOARDWIDTH);
-		tetrominoQueue = new TetrominoQueue(TETROMINOQUEUESIZE, TETROMINOSTARTROTATION, TETROMINOSTARTX, TETROMINOSTARTY);
 		player = new Player();
-		level = 1;
-		totalLinesCleared = 0;
+		player.setBoard(new Board(BOARDHEIGHT, BOARDWIDTH));
+		player.setTetrominoQueue(new TetrominoQueue(TETROMINOQUEUESIZE, TETROMINOSTARTROTATION, TETROMINOSTARTX, TETROMINOSTARTY));
 		isActive = false;
 	}
 	
@@ -86,13 +65,14 @@ public class SinglePlayerGame {
 	 * Resets the state of the game.
 	 */
 	public void newGame() {
-		board.clearBoard();
-		tetrominoQueue.clear();
-		tetrominoQueue.fill();
-		activeTetromino = tetrominoQueue.nextTetromino();
+		player.getBoard().clear();
+		player.getTetrominoQueue().clear();
+		player.getTetrominoQueue().fill();
+		player.setActiveTetromino(player.getTetrominoQueue().nextTetromino());
 		player.setScore(0);
-		level = 1;
-		totalLinesCleared = 0;
+		player.setTotalLinesCleared(0);
+		player.setLevel(1);
+		
 		isActive = true;
 		timeElapsed = 0;
 	}
@@ -116,10 +96,10 @@ public class SinglePlayerGame {
 		// millisecond intervals until level 20, where it remains at 100 for
 		// any further level increases.
 		int levelSpeed;		
-		if(level > 20) {
+		if(player.getLevel() > 20) {
 			levelSpeed = 100;
 		} else {
-			levelSpeed = 500 - ((level - 1) * 20); 
+			levelSpeed = 500 - ((player.getLevel() - 1) * 20); 
 		}
 		
 		// Only update the game's state if the time elapsed is greater than the
@@ -132,21 +112,21 @@ public class SinglePlayerGame {
 		}
 		
 		// Try to move active tetromino down; place on board if can't drop further
-		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(), 
-				activeTetromino.getRotation(), 
-				activeTetromino.getXPosition(), 
-				activeTetromino.getYPosition() + 1);
+		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(), 
+				player.getActiveTetromino().getRotation(), 
+				player.getActiveTetromino().getXPosition(), 
+				player.getActiveTetromino().getYPosition() + 1);
 		
-		if(board.isValidTetrominoPosition(movedTetromino)) {
+		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
 			
 			// Move the piece down
-			activeTetromino = movedTetromino;
+			player.setActiveTetromino(movedTetromino);
 			
 		} else {
 			
 			// Check that the game is not over; a piece being placed on the
 			// top row means the game is over
-			if(activeTetromino.getYPosition() <= 0) {
+			if(player.getActiveTetromino().getYPosition() <= 0) {
 				
 				// Game is over
 				isActive = false;
@@ -155,36 +135,36 @@ public class SinglePlayerGame {
 				
 				// Place the tetromino on the board and set the active
 				// tetromino to the next tetromino in the queue
-				board.placeTetromino(activeTetromino);
-				activeTetromino = tetrominoQueue.nextTetromino();
+				player.getBoard().placeTetromino(player.getActiveTetromino());
+				player.setActiveTetromino(player.getTetrominoQueue().nextTetromino());
 				
 				// Clear any full rows on the board
-				int linesCleared = board.clearFullLines();
-				totalLinesCleared += linesCleared;
+				int linesCleared = player.getBoard().clearFullLines();
+				player.setTotalLinesCleared(player.getTotalLinesCleared() + linesCleared);
 				
 				// Update player score depending on how many lines were cleared
 				switch(linesCleared) {
 				case 1:
-					player.setScore(player.getScore() + (40 * level));
+					player.setScore(player.getScore() + (40 * player.getLevel()));
 					break;
 				case 2:
-					player.setScore(player.getScore() + (100 * level));
+					player.setScore(player.getScore() + (100 * player.getLevel()));
 					break;
 				case 3:
-					player.setScore(player.getScore() + (300 * level));
+					player.setScore(player.getScore() + (300 * player.getLevel()));
 					break;
 				case 4:
-					player.setScore(player.getScore() + (1200 * level));
+					player.setScore(player.getScore() + (1200 * player.getLevel()));
 					break;
 				default:
 					break;
 				}
 				
 				// Update level; a maximum level of 99 is enforced
-				if (level > 99) {
-					level = 99;
+				if (player.getLevel() > 99) {
+					player.setLevel(99);
 				} else {
-					level = (totalLinesCleared / 10) + 1;;
+					player.setLevel((player.getTotalLinesCleared() / 10) + 1);
 				}
 				
 			}
@@ -194,59 +174,59 @@ public class SinglePlayerGame {
 	}
 	
 	public void rotateActiveTetromino() {
-		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
-				activeTetromino.getRotation(),
-				activeTetromino.getXPosition(),
-				activeTetromino.getYPosition());
+		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
+				player.getActiveTetromino().getRotation(),
+				player.getActiveTetromino().getXPosition(),
+				player.getActiveTetromino().getYPosition());
 		movedTetromino.rotateForward();
 		
-		if(board.isValidTetrominoPosition(movedTetromino)) {
-			activeTetromino = movedTetromino;
+		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
+			player.setActiveTetromino(movedTetromino);
 		}
 	}
 	
 	public void moveActiveTetrominoRight() {
-		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
-				activeTetromino.getRotation(),
-				activeTetromino.getXPosition() + 1,
-				activeTetromino.getYPosition());
+		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
+				player.getActiveTetromino().getRotation(),
+				player.getActiveTetromino().getXPosition() + 1,
+				player.getActiveTetromino().getYPosition());
 		
-		if(board.isValidTetrominoPosition(movedTetromino)) {
-			activeTetromino = movedTetromino;
+		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
+			player.setActiveTetromino(movedTetromino);
 		}
 	}
 	
 	public void moveActiveTetrominoLeft() {
-		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
-				activeTetromino.getRotation(), 
-				activeTetromino.getXPosition() - 1,
-				activeTetromino.getYPosition());
+		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
+				player.getActiveTetromino().getRotation(), 
+				player.getActiveTetromino().getXPosition() - 1,
+				player.getActiveTetromino().getYPosition());
 		
-		if(board.isValidTetrominoPosition(movedTetromino)) {
-			activeTetromino = movedTetromino;
+		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
+			player.setActiveTetromino(movedTetromino);
 		}
 	}
 	
 	public void moveActiveTetrominoDown() {
-		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
-				activeTetromino.getRotation(),
-				activeTetromino.getXPosition(),
-				activeTetromino.getYPosition() + 1);
+		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
+				player.getActiveTetromino().getRotation(),
+				player.getActiveTetromino().getXPosition(),
+				player.getActiveTetromino().getYPosition() + 1);
 		
-		if(board.isValidTetrominoPosition(movedTetromino)) {
-			activeTetromino = movedTetromino;
+		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
+			player.setActiveTetromino(movedTetromino);
 		}
 	}
 	
 	public void hardDropActiveTetromino() {
-		Tetromino movedTetromino = new Tetromino(activeTetromino.getType(),
-				activeTetromino.getRotation(),
-				activeTetromino.getXPosition(),
-				activeTetromino.getYPosition() + 1);
+		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
+				player.getActiveTetromino().getRotation(),
+				player.getActiveTetromino().getXPosition(),
+				player.getActiveTetromino().getYPosition() + 1);
 		
 		while(true) {
-			if(board.isValidTetrominoPosition(movedTetromino)) {
-				activeTetromino.setYPosition(movedTetromino.getYPosition());
+			if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
+				player.getActiveTetromino().setYPosition(movedTetromino.getYPosition());
 				movedTetromino.setYPosition(movedTetromino.getYPosition() + 1);
 			} else {
 				break;
@@ -255,10 +235,10 @@ public class SinglePlayerGame {
 	}
 	
 	public Tetromino generateProjectedTetromino() {
-		Tetromino projectedTetromino = new Tetromino(activeTetromino.getType(),
-				activeTetromino.getRotation(),
-				activeTetromino.getXPosition(),
-				activeTetromino.getYPosition());
+		Tetromino projectedTetromino = new Tetromino(player.getActiveTetromino().getType(),
+				player.getActiveTetromino().getRotation(),
+				player.getActiveTetromino().getXPosition(),
+				player.getActiveTetromino().getYPosition());
 		
 		while(true) {
 			Tetromino tempTetromino = new Tetromino(projectedTetromino.getType(),
@@ -266,7 +246,7 @@ public class SinglePlayerGame {
 					projectedTetromino.getXPosition(),
 					projectedTetromino.getYPosition() + 1);
 			
-			if(board.isValidTetrominoPosition(tempTetromino)) {
+			if(player.getBoard().isValidTetrominoPosition(tempTetromino)) {
 				projectedTetromino.setYPosition(tempTetromino.getYPosition());
 			} else {
 				break;
@@ -275,33 +255,7 @@ public class SinglePlayerGame {
 		
 		return projectedTetromino;
 	}
-	
-	/**
-	 * Returns the board used for storing placed tetrominoes.
-	 * 
-	 * @return The board used for storing placed tetrominoes.
-	 */
-	public Board getBoard() {
-		return board;
-	}
-	
-	/**
-	 * Returns the active tetromino being controlled by the player.
-	 * @return The active tetromino being controlled by the player.
-	 */
-	public Tetromino getActiveTetromino() {
-		return activeTetromino;
-	}
-	
-	/**
-	 * Returns the queue of tetrominoes that will be played.
-	 * 
-	 * @return The queue of tetrominoes that will be played.
-	 */
-	public TetrominoQueue getTetrominoQueue() {
-		return tetrominoQueue;
-	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}
@@ -312,14 +266,6 @@ public class SinglePlayerGame {
 	 */
 	public boolean getIsActive() {
 		return isActive;
-	}
-	
-	public int getLevel() {
-		return level;
-	}
-	
-	public int getTotalLinesCleared() {
-		return totalLinesCleared;
 	}
 	
 }
