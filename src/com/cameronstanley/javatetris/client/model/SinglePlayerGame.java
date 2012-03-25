@@ -85,6 +85,7 @@ public class SinglePlayerGame {
 	 * @param delta The elapsed time in milliseconds.
 	 */
 	public void updateState(long delta) {
+		
 		// Reset the game if the active flag is false
 		if(!isActive) {
 			newGame();
@@ -171,89 +172,6 @@ public class SinglePlayerGame {
 			
 		}		
 		
-	}
-	
-	public void rotateActiveTetromino() {
-		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
-				player.getActiveTetromino().getRotation(),
-				player.getActiveTetromino().getXPosition(),
-				player.getActiveTetromino().getYPosition());
-		movedTetromino.rotateForward();
-		
-		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
-			player.setActiveTetromino(movedTetromino);
-		}
-	}
-	
-	public void moveActiveTetrominoRight() {
-		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
-				player.getActiveTetromino().getRotation(),
-				player.getActiveTetromino().getXPosition() + 1,
-				player.getActiveTetromino().getYPosition());
-		
-		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
-			player.setActiveTetromino(movedTetromino);
-		}
-	}
-	
-	public void moveActiveTetrominoLeft() {
-		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
-				player.getActiveTetromino().getRotation(), 
-				player.getActiveTetromino().getXPosition() - 1,
-				player.getActiveTetromino().getYPosition());
-		
-		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
-			player.setActiveTetromino(movedTetromino);
-		}
-	}
-	
-	public void moveActiveTetrominoDown() {
-		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
-				player.getActiveTetromino().getRotation(),
-				player.getActiveTetromino().getXPosition(),
-				player.getActiveTetromino().getYPosition() + 1);
-		
-		if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
-			player.setActiveTetromino(movedTetromino);
-		}
-	}
-	
-	public void hardDropActiveTetromino() {
-		Tetromino movedTetromino = new Tetromino(player.getActiveTetromino().getType(),
-				player.getActiveTetromino().getRotation(),
-				player.getActiveTetromino().getXPosition(),
-				player.getActiveTetromino().getYPosition() + 1);
-		
-		while(true) {
-			if(player.getBoard().isValidTetrominoPosition(movedTetromino)) {
-				player.getActiveTetromino().setYPosition(movedTetromino.getYPosition());
-				movedTetromino.setYPosition(movedTetromino.getYPosition() + 1);
-			} else {
-				break;
-			}
-		}
-	}
-	
-	public Tetromino generateProjectedTetromino() {
-		Tetromino projectedTetromino = new Tetromino(player.getActiveTetromino().getType(),
-				player.getActiveTetromino().getRotation(),
-				player.getActiveTetromino().getXPosition(),
-				player.getActiveTetromino().getYPosition());
-		
-		while(true) {
-			Tetromino tempTetromino = new Tetromino(projectedTetromino.getType(),
-					projectedTetromino.getRotation(),
-					projectedTetromino.getXPosition(),
-					projectedTetromino.getYPosition() + 1);
-			
-			if(player.getBoard().isValidTetrominoPosition(tempTetromino)) {
-				projectedTetromino.setYPosition(tempTetromino.getYPosition());
-			} else {
-				break;
-			}
-		}
-		
-		return projectedTetromino;
 	}
 
 	public Player getPlayer() {

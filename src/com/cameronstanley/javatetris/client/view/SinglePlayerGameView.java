@@ -5,6 +5,7 @@ import java.awt.Font;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.TrueTypeFont;
 
+import com.cameronstanley.javatetris.client.model.GameLogic;
 import com.cameronstanley.javatetris.client.model.SinglePlayerGame;
 import com.cameronstanley.javatetris.client.model.Tetromino;
 import com.cameronstanley.javatetris.client.model.TetrominoType;
@@ -189,7 +190,7 @@ public class SinglePlayerGameView implements View {
 	}
 	
 	private void renderProjectedTetromino() {
-		Tetromino projectedTetromino = singlePlayerGame.generateProjectedTetromino();
+		Tetromino projectedTetromino = GameLogic.generateProjectedDroppedTetromino(singlePlayerGame.getPlayer());
 		int[][] activeTetrominoRepresentation = projectedTetromino.getTetrominoRepresentation();
 		int offsetX = projectedTetromino.getXPosition();
 		int offsetY = projectedTetromino.getYPosition();

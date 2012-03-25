@@ -2,6 +2,7 @@ package com.cameronstanley.javatetris.client.controller;
 
 import org.lwjgl.input.Keyboard;
 
+import com.cameronstanley.javatetris.client.model.GameLogic;
 import com.cameronstanley.javatetris.client.model.SinglePlayerGame;
 
 public class SinglePlayerGameInputController {
@@ -12,23 +13,23 @@ public class SinglePlayerGameInputController {
 		this.singlePlayerGame = singlePlayerGame;
 	}
 
-	public void pollInput() {
+	public void pollInput() {		
 		if(Keyboard.next()) {
 			Keyboard.enableRepeatEvents(true);
 			if(Keyboard.getEventKeyState()) {				
 				if(Keyboard.getEventKey() == Keyboard.KEY_UP) {
-					singlePlayerGame.rotateActiveTetromino();
+					GameLogic.rotateTetromino(singlePlayerGame.getPlayer());
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_RIGHT) {
-					singlePlayerGame.moveActiveTetrominoRight();
+					GameLogic.moveTetrominoRight(singlePlayerGame.getPlayer());
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
 					if(Keyboard.isRepeatEvent()) {
 						Keyboard.enableRepeatEvents(false);		// Prevent hard dropping twice
-						singlePlayerGame.hardDropActiveTetromino();
+						GameLogic.hardDropTetromino(singlePlayerGame.getPlayer());
 					} else {
-						singlePlayerGame.moveActiveTetrominoDown();
+						GameLogic.moveTetrominoDown(singlePlayerGame.getPlayer());
 					}
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
-					singlePlayerGame.moveActiveTetrominoLeft();
+					GameLogic.moveTetrominoLeft(singlePlayerGame.getPlayer());
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
 					JavaTetrisController.setState(JavaTetrisControllerState.MAINMENU);
 				}
