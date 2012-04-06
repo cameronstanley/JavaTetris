@@ -149,7 +149,7 @@ public class NetworkClientController {
 							UpdateBoardResponse updateBoardResponse = (UpdateBoardResponse) object;
 							onlineMultiplayerGame.getOpponent().setBoard(updateBoardResponse.getBoard());
 						} else if (object instanceof UpdatePlayerStatsResponse) {
-							UpdatePlayerStatsResponse updatePlayerStatsResponse = (UpdatePlayerStatsResponse) object;
+							// UpdatePlayerStatsResponse updatePlayerStatsResponse = (UpdatePlayerStatsResponse) object;
 						}
 					}
 			}
