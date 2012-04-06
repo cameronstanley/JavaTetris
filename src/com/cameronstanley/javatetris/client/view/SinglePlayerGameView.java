@@ -82,7 +82,7 @@ public class SinglePlayerGameView implements View {
 	 * Renders the grid inside of the board outline.
 	 */
 	private void renderBoardGrid() {
-		for(int i = 1; i < singlePlayerGame.getPlayer().getBoard().getHeight(); i++) {
+		for (int i = 1; i < singlePlayerGame.getPlayer().getBoard().getHeight(); i++) {
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor3f(0.5f, 0.5f, 0.5f);
 			GL11.glVertex2i(240, 60 + (i * 24));
@@ -90,7 +90,7 @@ public class SinglePlayerGameView implements View {
 			GL11.glEnd();
 		}
 		
-		for(int i = 1; i < singlePlayerGame.getPlayer().getBoard().getWidth(); i++) {
+		for (int i = 1; i < singlePlayerGame.getPlayer().getBoard().getWidth(); i++) {
 			GL11.glBegin(GL11.GL_LINES);
 			GL11.glColor3f(0.5f, 0.5f, 0.5f);
 			GL11.glVertex2i(240 + (i * 32), 60);

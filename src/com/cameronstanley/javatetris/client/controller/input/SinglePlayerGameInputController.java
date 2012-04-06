@@ -1,11 +1,13 @@
-package com.cameronstanley.javatetris.client.controller;
+package com.cameronstanley.javatetris.client.controller.input;
 
 import org.lwjgl.input.Keyboard;
 
+import com.cameronstanley.javatetris.client.controller.JavaTetrisController;
+import com.cameronstanley.javatetris.client.controller.JavaTetrisControllerState;
 import com.cameronstanley.javatetris.client.model.GameLogic;
 import com.cameronstanley.javatetris.client.model.SinglePlayerGame;
 
-public class SinglePlayerGameInputController {
+public class SinglePlayerGameInputController implements InputController {
 	
 	private SinglePlayerGame singlePlayerGame;
 	
@@ -13,7 +15,9 @@ public class SinglePlayerGameInputController {
 		this.singlePlayerGame = singlePlayerGame;
 	}
 
-	public void pollInput() {		
+	public void pollInput() {	
+		JavaTetrisController javaTetrisController = JavaTetrisController.getInstance();
+		
 		if(Keyboard.next()) {
 			Keyboard.enableRepeatEvents(true);
 			if(Keyboard.getEventKeyState()) {				
@@ -31,7 +35,7 @@ public class SinglePlayerGameInputController {
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
 					GameLogic.moveTetrominoLeft(singlePlayerGame.getPlayer());
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
-					JavaTetrisController.setState(JavaTetrisControllerState.MAINMENU);
+					javaTetrisController.setState(JavaTetrisControllerState.MAINMENU);
 				}
 			}
 		}

@@ -33,6 +33,10 @@ public class Tetromino {
 	 */
 	public static final int GRIDSIDELENGTH = 4;
 	
+	public Tetromino() {
+		
+	}
+	
 	/**
 	 * Creates a tetromino using the given type, rotation, x position, and y position.
 	 * 

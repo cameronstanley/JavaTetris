@@ -4,12 +4,12 @@ public class User {
 	
 	private String username;
 	private String password;
-	private boolean isPlayingGame;
+	private int gameID;
 	
 	public User() {
 		username = "";
 		password = "";
-		isPlayingGame = false;
+		gameID = -1;
 	}
 	
 	@Override
@@ -29,13 +29,13 @@ public class User {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (getClass() != obj.getClass()) 
 			return false;
 		User other = (User) obj;
 		if (password == null) {
 			if (other.password != null)
 				return false;
-		} else if (!password.equals(other.password))
+		} else if (!password.equals(other.password)) 
 			return false;
 		if (username == null) {
 			if (other.username != null)
@@ -60,13 +60,13 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	public boolean isPlayingGame() {
-		return isPlayingGame;
+
+	public int getGameID() {
+		return gameID;
 	}
 
-	public void setPlayingGame(boolean isPlayingGame) {
-		this.isPlayingGame = isPlayingGame;
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
 	}
 	
 }

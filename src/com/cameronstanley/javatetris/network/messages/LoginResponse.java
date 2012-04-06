@@ -15,5 +15,5 @@ public class LoginResponse {
 	public void setLoggedIn(boolean isLoggedIn) {
 		this.isLoggedIn = isLoggedIn;
 	}
-	
+		
 }

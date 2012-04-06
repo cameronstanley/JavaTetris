@@ -23,6 +23,10 @@ public class Board {
 	 */
 	private int width;
 	
+	public Board() {
+		
+	}
+	
 	/**
 	 * Creates a board with the given height and width dimensions.
 	 * 

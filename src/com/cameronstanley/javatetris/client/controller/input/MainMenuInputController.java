@@ -1,10 +1,12 @@
-package com.cameronstanley.javatetris.client.controller;
+package com.cameronstanley.javatetris.client.controller.input;
 
 import org.lwjgl.input.Keyboard;
 
+import com.cameronstanley.javatetris.client.controller.JavaTetrisController;
+import com.cameronstanley.javatetris.client.controller.JavaTetrisControllerState;
 import com.cameronstanley.javatetris.client.model.Menu;
 
-public class MainMenuInputController {
+public class MainMenuInputController implements InputController {
 
 	private Menu mainMenu;
 	
@@ -13,6 +15,8 @@ public class MainMenuInputController {
 	}
 	
 	public void pollInput() {
+		JavaTetrisController javaTetrisController = JavaTetrisController.getInstance();
+		
 		if(Keyboard.next()) {
 			if(Keyboard.getEventKeyState()) {				
 				if(Keyboard.getEventKey() == Keyboard.KEY_UP) {
@@ -22,13 +26,14 @@ public class MainMenuInputController {
 				} else if(Keyboard.getEventKey() == Keyboard.KEY_RETURN) {
 					switch(mainMenu.getSelectedMenuItemIndex()) {
 					case 0:
-						JavaTetrisController.setState(JavaTetrisControllerState.STARTSINGLEPLAYERGAME);
+						javaTetrisController.setState(JavaTetrisControllerState.STARTSINGLEPLAYERGAME);
 						break;
 					case 1:
-						JavaTetrisController.setState(JavaTetrisControllerState.STARTONLINEMULTIPLAYER);
+						javaTetrisController.setState(JavaTetrisControllerState.PLAYONLINEMULTIPLAYER);
+						JavaTetrisController.networkClientController.connect();
 						break;
 					case 2:
-						JavaTetrisController.setState(JavaTetrisControllerState.PLAYSINGLEPLAYERGAME);
+						javaTetrisController.setState(JavaTetrisControllerState.PLAYSINGLEPLAYERGAME);
 						break;
 					case 3:
 						System.exit(0);

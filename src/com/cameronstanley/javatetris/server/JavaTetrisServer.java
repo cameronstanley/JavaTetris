@@ -1,19 +1,10 @@
 package com.cameronstanley.javatetris.server;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.cameronstanley.javatetris.network.Network;
 import com.cameronstanley.javatetris.network.PlayerConnection;
-import com.cameronstanley.javatetris.network.messages.LoginRequest;
-import com.cameronstanley.javatetris.network.messages.LoginResponse;
-import com.cameronstanley.javatetris.network.messages.RegisterRequest;
-import com.cameronstanley.javatetris.network.messages.RegisterResponse;
-import com.cameronstanley.javatetris.network.messages.StartNewGameRequest;
-import com.cameronstanley.javatetris.network.messages.StartNewGameResponse;
-import com.cameronstanley.javatetris.network.messages.UpdateTetrominoRequest;
-import com.cameronstanley.javatetris.network.messages.WaitingPlayersRequest;
-import com.cameronstanley.javatetris.network.messages.WaitingPlayersResponse;
+import com.cameronstanley.javatetris.network.messages.*;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -25,13 +16,14 @@ public class JavaTetrisServer {
 	private Server server;
 	private RegistrationManager registrationManager;
 	private LoginManager loginManager;
-	private ArrayList<Game> activeGames;
+	private GameManager gameManager;
 	
 	public JavaTetrisServer() {
 		Log.set(Log.LEVEL_DEBUG);
 		registrationManager = new RegistrationManager();
 		registrationManager.loadUsers();
 		loginManager = new LoginManager();
+		gameManager = new GameManager();
 	}
 	
 	public void start() throws IOException {
@@ -46,6 +38,8 @@ public class JavaTetrisServer {
 		server.addListener(new Listener() {
 			public void received(Connection connection, Object object) {
 				PlayerConnection playerConnection = (PlayerConnection) connection;
+				
+				try {
 				
 				if (object instanceof RegisterRequest) {
 					// Ignore if already logged in
@@ -74,65 +68,97 @@ public class JavaTetrisServer {
 					User user = new User();
 					user.setUsername(loginRequest.getUsername());
 					user.setPassword(loginRequest.getPassword());
-					
+										
 					if (registrationManager.isUserRegistered(user)) {
 						if (loginManager.logInUser(user)) {
+							playerConnection.setUser(user);
 							loginResponse.setLoggedIn(true);
+							connection.sendTCP(loginResponse);
+							
+							// Check if we can start a game
+							for (User opponent : loginManager.getLoggedInUsers()) {
+								if (!user.equals(opponent) && opponent.getGameID() == -1) {
+									gameManager.startNewGame(user, opponent);
+									
+									StartNewGameResponse startNewGameResponse = new StartNewGameResponse();
+									
+									for (Connection c : server.getConnections()) {
+										PlayerConnection p = (PlayerConnection) c;
+										if (p.getUser().equals(opponent)) {
+											p.sendTCP(startNewGameResponse);
+											playerConnection.sendTCP(startNewGameResponse);
+											break;
+										}
+									}
+									
+									break;
+								}
+							}
+							
 						} else {
 							loginResponse.setLoggedIn(false);
+							connection.sendTCP(loginResponse);
 						}
 					} else {
 						loginResponse.setLoggedIn(false);
+						connection.sendTCP(loginResponse);
 					}
 					
-					connection.sendTCP(loginResponse);
-				} else if (object instanceof WaitingPlayersRequest) {
-					// Ignore if not logged in
-					if (!loginManager.isUserLoggedIn(playerConnection.getUser())) {
+				} else if (object instanceof UpdateTetrominoRequest) {
+					// Ignore if not logged in or not playing
+					if (!loginManager.isUserLoggedIn(playerConnection.getUser()) || playerConnection.getUser().getGameID() == -1) {
 						return;
 					}
 					
-					WaitingPlayersResponse waitingPlayersResponse = new WaitingPlayersResponse();
-					ArrayList<User> waitingPlayers = new ArrayList<User>();
+					UpdateTetrominoRequest updateTetrominoRequest = (UpdateTetrominoRequest) object;
+					UpdateTetrominoResponse updateTetrominoResponse = new UpdateTetrominoResponse();
+					updateTetrominoResponse.setUpdatedTetromino(updateTetrominoRequest.getUpdatedTetromino());
 					
-					for (User user : loginManager.getLoggedInUsers()) {
-						if (!user.equals(playerConnection.getUser()) && !user.isPlayingGame()) {
-							waitingPlayers.add(user);
-						}
-					}
-					
-					waitingPlayersResponse.setWaitingPlayers(waitingPlayers);
-					connection.sendTCP(waitingPlayersResponse);
-				} else if (object instanceof StartNewGameRequest) {
-					// Ignore if not logged in
-					if (!loginManager.isUserLoggedIn(playerConnection.getUser())) {
-						return;
-					}
-					
-					StartNewGameRequest startNewGameRequest = (StartNewGameRequest) object;
-					StartNewGameResponse startNewGameResponse = new StartNewGameResponse();
-					User desiredOpponent = startNewGameRequest.getDesiredOpponent();
-				
+					User opponent = gameManager.retrieveOpponent(playerConnection.getUser());
+			
 					for (Connection opponentConnection : server.getConnections()) {
 						PlayerConnection opponentPlayerConnection = (PlayerConnection) opponentConnection;
-						if (opponentPlayerConnection.getUser().equals(desiredOpponent)) {
-							if (!opponentPlayerConnection.getUser().isPlayingGame()) {		
-								Game newGame = new Game();
-								newGame.setPlayer1(playerConnection.getUser());
-								newGame.setPlayer2(opponentPlayerConnection.getUser());
-								activeGames.add(newGame);
-								
-								playerConnection.getUser().setPlayingGame(true);
-								opponentPlayerConnection.getUser().setPlayingGame(true);
-
-								playerConnection.sendTCP(startNewGameResponse);
-								opponentPlayerConnection.sendTCP(startNewGameResponse);
-								break;
-							}
+						if (opponentPlayerConnection.getUser().equals(opponent)) {
+							opponentConnection.sendTCP(updateTetrominoResponse);
+							break;
 						}
 					}
-				} else if (object instanceof UpdateTetrominoRequest) {
+				} else if (object instanceof UpdateBoardRequest) {
+					// Ignore if not logged in or not playing
+					if (!loginManager.isUserLoggedIn(playerConnection.getUser()) || playerConnection.getUser().getGameID() == -1) {
+						return;
+					}
+										
+					UpdateBoardRequest updateBoardRequest = (UpdateBoardRequest) object;
+					UpdateBoardResponse updateBoardResponse = new UpdateBoardResponse();
+					updateBoardResponse.setBoard(updateBoardRequest.getBoard());
 					
+					User opponent = gameManager.retrieveOpponent(playerConnection.getUser());
+					
+					for (Connection opponentConnection : server.getConnections()) {
+						PlayerConnection opponentPlayerConnection = (PlayerConnection) opponentConnection;
+						if (opponentPlayerConnection.getUser().equals(opponent)) {
+							opponentConnection.sendTCP(updateBoardResponse);
+							break;
+						}
+					}
+					
+				} else if (object instanceof UpdatePlayerStatsRequest) {
+					
+				}
+				
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			
+			public void disconnected(Connection connection) {
+				PlayerConnection playerConnection = (PlayerConnection) connection;
+				User disconnectedUser = playerConnection.getUser();
+				
+				loginManager.logOutUser(disconnectedUser);
+				if (disconnectedUser.getGameID() != -1) {
+					gameManager.endGame(disconnectedUser.getGameID());
 				}
 			}
 		});

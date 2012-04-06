@@ -5,20 +5,41 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import com.cameronstanley.javatetris.client.controller.input.MainMenuInputController;
+import com.cameronstanley.javatetris.client.controller.input.NetworkClientController;
+import com.cameronstanley.javatetris.client.controller.input.OnlineMultiplayerGameInputController;
+import com.cameronstanley.javatetris.client.controller.input.SinglePlayerGameInputController;
 import com.cameronstanley.javatetris.client.model.Menu;
 import com.cameronstanley.javatetris.client.model.MenuItem;
+import com.cameronstanley.javatetris.client.model.OnlineMultiplayerGame;
 import com.cameronstanley.javatetris.client.model.SinglePlayerGame;
 import com.cameronstanley.javatetris.client.view.MainMenuView;
+import com.cameronstanley.javatetris.client.view.OnlineMultiplayerView;
 import com.cameronstanley.javatetris.client.view.SinglePlayerGameView;
 
 public class JavaTetrisController {
 	
+	private static JavaTetrisController javaTetrisController = null;
 	private static JavaTetrisControllerState state;
+	public static NetworkClientController networkClientController;
+	
 	private final String WINDOWTITLE = "JavaTetris";
 	private final int WINDOWWIDTH = 800;
 	private final int WINDOWHEIGHT = 600;
 	private final int TARGETFPS = 60;
 		
+	private JavaTetrisController() {
+		
+	}
+	
+	public static JavaTetrisController getInstance() {
+		if (javaTetrisController == null) {
+			javaTetrisController = new JavaTetrisController();
+		}
+		
+		return javaTetrisController;
+	}
+	
 	public void start() {
 		try {
 			Display.setDisplayMode(new DisplayMode(WINDOWWIDTH, WINDOWHEIGHT));
@@ -57,12 +78,20 @@ public class JavaTetrisController {
 		SinglePlayerGameInputController singlePlayerGameInputController = new SinglePlayerGameInputController(singlePlayerGame);
 		SinglePlayerGameView singlePlayerGameView = new SinglePlayerGameView(singlePlayerGame);
 		
+		// Create an online multiplayer game
+		OnlineMultiplayerGame onlineMultiplayerGame = new OnlineMultiplayerGame();
+		OnlineMultiplayerGameInputController onlineMultiplayerGameInputController = new OnlineMultiplayerGameInputController(onlineMultiplayerGame);
+		OnlineMultiplayerView onlineMultiplayerGameView = new OnlineMultiplayerView(onlineMultiplayerGame);
+		networkClientController = new NetworkClientController(onlineMultiplayerGame);
+		
 		// Create and initialize a timer
 		Timer timer = new Timer();
 		timer.init();
 		
+		long timeElapsed = 0;
+		
 		// Main loop
-		while (!Display.isCloseRequested()) {
+		while (!Display.isCloseRequested()) {			
 			switch(state) {
 			case MAINMENU:
 				mainMenuInputController.pollInput();
@@ -80,6 +109,17 @@ public class JavaTetrisController {
 				singlePlayerGameView.render();
 				break;
 			case PLAYONLINEMULTIPLAYER:
+				long delta = timer.getDelta();
+				
+				timeElapsed += delta;
+				if (timeElapsed > 50) {
+					networkClientController.updateActiveTetromino();
+					networkClientController.updateBoard();
+				}
+				
+				onlineMultiplayerGame.updateState(delta);
+				onlineMultiplayerGameInputController.pollInput();
+				onlineMultiplayerGameView.render();
 				break;
 			}
 			
@@ -90,11 +130,13 @@ public class JavaTetrisController {
 		Display.destroy();
 	}
 		
-	public static JavaTetrisControllerState getState() {
+	
+	
+	public JavaTetrisControllerState getState() {
 		return state;
 	}
 	
-	public static void setState(JavaTetrisControllerState state) {
+	public void setState(JavaTetrisControllerState state) {
 		JavaTetrisController.state = state;
 	}
 }
