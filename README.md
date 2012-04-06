@@ -1,9 +1,11 @@
-# JavaTetris #
+JavaTetris
+==========
 
 Good ol' Tetris implemented in Java.
 
 
-## Credits ##
+Credits
+-------
 
 This software uses the Lightweight Java Game Library Project. The license conditions for the Lightweight Java Game Library Project are as follows:
 
