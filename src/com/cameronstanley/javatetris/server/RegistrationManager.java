@@ -7,14 +7,21 @@ public class RegistrationManager {
 
 	private ArrayList<User> registeredUsers;
 	
+	private static final String DATAFILEDIRECTORY = "data";
 	private static final String DATAFILENAME = "users";
 	
 	public RegistrationManager() {
 		registeredUsers = new ArrayList<User>();
 		
-		// Make sure the data file exists; if not, create it
 		try {
-			File dataFile = new File(DATAFILENAME);
+			// Make sure the date file directory exists; if not, create it
+			File dataDirectory = new File(DATAFILEDIRECTORY);
+			if (!dataDirectory.isDirectory()) {
+				dataDirectory.mkdir();
+			}
+			
+			// Make sure the data file exists; if not, create it
+			File dataFile = new File(DATAFILEDIRECTORY + "/" + DATAFILENAME);
 			if (!dataFile.exists()) {
 				dataFile.createNewFile();
 			} 
@@ -42,7 +49,7 @@ public class RegistrationManager {
 		registeredUsers.clear();
 		
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(DATAFILENAME));
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(DATAFILEDIRECTORY + "/" + DATAFILENAME));
 			try {
 				String currentLine;
 				while ((currentLine = bufferedReader.readLine()) != null) {
@@ -63,7 +70,7 @@ public class RegistrationManager {
 	
 	public void saveUsers() {
 		try {
-			Writer writer = new BufferedWriter(new FileWriter(DATAFILENAME));
+			Writer writer = new BufferedWriter(new FileWriter(DATAFILEDIRECTORY + "/" + DATAFILENAME));
 			try {
 				for (User user : registeredUsers) {
 					writer.write(user.getUsername() + "," + user.getPassword() + "\n");

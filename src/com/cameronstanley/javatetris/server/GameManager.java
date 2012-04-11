@@ -26,7 +26,7 @@ public class GameManager {
 		Game game = activeGames.get(new Integer(gameID));
 		game.getPlayer1().setGameID(-1);
 		game.getPlayer2().setGameID(-1);
-		activeGames.remove(game);
+		activeGames.remove(gameID);
 	}
 	
 	public User retrieveOpponent(User player) {

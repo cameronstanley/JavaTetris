@@ -29,8 +29,7 @@ public class MainMenuInputController implements InputController {
 						javaTetrisController.setState(JavaTetrisControllerState.STARTSINGLEPLAYERGAME);
 						break;
 					case 1:
-						javaTetrisController.setState(JavaTetrisControllerState.PLAYONLINEMULTIPLAYER);
-						JavaTetrisController.networkClientController.connect();
+						JavaTetrisController.networkController.connect();
 						break;
 					case 2:
 						javaTetrisController.setState(JavaTetrisControllerState.PLAYSINGLEPLAYERGAME);

@@ -33,7 +33,7 @@ public class OnlineMultiplayerGameInputController implements InputController {
 					GameLogic.moveTetrominoLeft(onlineMultiplayerGame.getPlayer());
 				}
 				
-				JavaTetrisController.networkClientController.updateActiveTetromino();
+				JavaTetrisController.networkController.updateActiveTetromino();
 			}
 		}
 	}

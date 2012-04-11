@@ -10,9 +10,9 @@ import com.cameronstanley.javatetris.client.controller.JavaTetrisController;
 public class Main {
 
 	/**
-	 * The entry point to the application.
+	 * The main entry point to the program.
 	 * 
-	 * @param args The command line arguments to the program.
+	 * @param args The command line arguments.
 	 */
 	public static void main(String[] args) {
 		JavaTetrisController javaTetrisController = JavaTetrisController.getInstance();

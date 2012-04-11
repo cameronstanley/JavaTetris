@@ -23,6 +23,10 @@ public class Network {
 		kryo.register(UpdateTetrominoResponse.class);
 		kryo.register(UpdateBoardRequest.class);
 		kryo.register(UpdateBoardResponse.class);
+		kryo.register(UpdatePlayerStatsRequest.class);
+		kryo.register(UpdatePlayerStatsResponse.class);
+		kryo.register(GameOverRequest.class);
+		kryo.register(GameOverResponse.class);
 		kryo.register(Tetromino.class);
 		kryo.register(TetrominoType.class);
 		kryo.register(TetrominoType[][].class);

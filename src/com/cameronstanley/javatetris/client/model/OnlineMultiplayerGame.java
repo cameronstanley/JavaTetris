@@ -5,7 +5,12 @@ public class OnlineMultiplayerGame {
 	private Player player;
 	private Player opponent;
 	private boolean isWaiting;
+	private boolean isPlayerAlive;
 	private long timeElapsed;
+	
+	private boolean playerActiveTetrominoUpdated;
+	private boolean playerBoardUpdated;
+	private boolean playerStatisticsUpdated;
 	
 	public static final int BOARDWIDTH = 10;
 	public static final int BOARDHEIGHT = 20;
@@ -25,7 +30,9 @@ public class OnlineMultiplayerGame {
 		opponent.setTetrominoQueue(new TetrominoQueue(TETROMINOQUEUESIZE, TETROMINOSTARTROTATION, TETROMINOSTARTX, TETROMINOSTARTY));
 		
 		isWaiting = true;
-	
+		isPlayerAlive = true;
+		timeElapsed = 0;
+		
 		newGame();
 	}
 	
@@ -43,12 +50,13 @@ public class OnlineMultiplayerGame {
 		opponent.getTetrominoQueue().fill();
 		opponent.setActiveTetromino(opponent.getTetrominoQueue().nextTetromino());
 		
+		isPlayerAlive = true;
 		timeElapsed = 0;
 	}
 	
 	public void updateState(long delta) {
 		if (isWaiting) {
-		//	return;
+			return;
 		}
 				
 		// The level speed determines how many milliseconds must elapse before
@@ -88,9 +96,7 @@ public class OnlineMultiplayerGame {
 			// Check that the game is not over; a piece being placed on the
 			// top row means the game is over
 			if(player.getActiveTetromino().getYPosition() <= 0) {
-				
-				// TODO: Game is over
-								
+				isPlayerAlive = false;
 			} else {
 				
 				// Place the tetromino on the board and set the active
@@ -155,6 +161,38 @@ public class OnlineMultiplayerGame {
 
 	public void setWaiting(boolean isWaiting) {
 		this.isWaiting = isWaiting;
+	}
+	
+	public boolean isPlayerAlive() {
+		return isPlayerAlive;
+	}
+
+	public void setPlayerAlive(boolean isPlayerAlive) {
+		this.isPlayerAlive = isPlayerAlive;
+	}
+
+	public boolean isPlayerActiveTetrominoUpdated() {
+		return playerActiveTetrominoUpdated;
+	}
+
+	public void setPlayerActiveTetrominoUpdated(boolean playerActiveTetrominoUpdated) {
+		this.playerActiveTetrominoUpdated = playerActiveTetrominoUpdated;
+	}
+
+	public boolean isPlayerBoardUpdated() {
+		return playerBoardUpdated;
+	}
+
+	public void setPlayerBoardUpdated(boolean playerBoardUpdated) {
+		this.playerBoardUpdated = playerBoardUpdated;
+	}
+
+	public boolean isPlayerStatisticsUpdated() {
+		return playerStatisticsUpdated;
+	}
+
+	public void setPlayerStatisticsUpdated(boolean playerStatisticsUpdated) {
+		this.playerStatisticsUpdated = playerStatisticsUpdated;
 	}
 	
 }

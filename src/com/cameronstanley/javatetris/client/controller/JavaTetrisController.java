@@ -6,7 +6,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 import com.cameronstanley.javatetris.client.controller.input.MainMenuInputController;
-import com.cameronstanley.javatetris.client.controller.input.NetworkClientController;
+import com.cameronstanley.javatetris.client.controller.input.NetworkController;
 import com.cameronstanley.javatetris.client.controller.input.OnlineMultiplayerGameInputController;
 import com.cameronstanley.javatetris.client.controller.input.SinglePlayerGameInputController;
 import com.cameronstanley.javatetris.client.model.Menu;
@@ -21,7 +21,7 @@ public class JavaTetrisController {
 	
 	private static JavaTetrisController javaTetrisController = null;
 	private static JavaTetrisControllerState state;
-	public static NetworkClientController networkClientController;
+	public static NetworkController networkController;
 	
 	private final String WINDOWTITLE = "JavaTetris";
 	private final int WINDOWWIDTH = 800;
@@ -82,14 +82,12 @@ public class JavaTetrisController {
 		OnlineMultiplayerGame onlineMultiplayerGame = new OnlineMultiplayerGame();
 		OnlineMultiplayerGameInputController onlineMultiplayerGameInputController = new OnlineMultiplayerGameInputController(onlineMultiplayerGame);
 		OnlineMultiplayerView onlineMultiplayerGameView = new OnlineMultiplayerView(onlineMultiplayerGame);
-		networkClientController = new NetworkClientController(onlineMultiplayerGame);
+		networkController = new NetworkController(onlineMultiplayerGame);
 		
 		// Create and initialize a timer
 		Timer timer = new Timer();
 		timer.init();
-		
-		long timeElapsed = 0;
-		
+				
 		// Main loop
 		while (!Display.isCloseRequested()) {			
 			switch(state) {
@@ -108,16 +106,16 @@ public class JavaTetrisController {
 				singlePlayerGameInputController.pollInput();
 				singlePlayerGameView.render();
 				break;
-			case PLAYONLINEMULTIPLAYER:
-				long delta = timer.getDelta();
+			case PLAYONLINEMULTIPLAYER:		
+				networkController.updateBoard();
+				networkController.updateActiveTetromino();
+				networkController.updateStats();
 				
-				timeElapsed += delta;
-				if (timeElapsed > 50) {
-					networkClientController.updateActiveTetromino();
-					networkClientController.updateBoard();
+				if(!onlineMultiplayerGame.isWaiting() && !onlineMultiplayerGame.isPlayerAlive()) {
+					networkController.playerLost();
 				}
 				
-				onlineMultiplayerGame.updateState(delta);
+				onlineMultiplayerGame.updateState(timer.getDelta());
 				onlineMultiplayerGameInputController.pollInput();
 				onlineMultiplayerGameView.render();
 				break;
@@ -130,8 +128,6 @@ public class JavaTetrisController {
 		Display.destroy();
 	}
 		
-	
-	
 	public JavaTetrisControllerState getState() {
 		return state;
 	}
