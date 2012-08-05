@@ -1,5 +1,7 @@
 package com.cameronstanley.javatetris.client.controller;
 
+import javax.swing.JOptionPane;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -9,6 +11,7 @@ import com.cameronstanley.javatetris.client.controller.input.MainMenuInputContro
 import com.cameronstanley.javatetris.client.controller.input.NetworkController;
 import com.cameronstanley.javatetris.client.controller.input.OnlineMultiplayerGameInputController;
 import com.cameronstanley.javatetris.client.controller.input.SinglePlayerGameInputController;
+import com.cameronstanley.javatetris.client.model.MainMenu;
 import com.cameronstanley.javatetris.client.model.Menu;
 import com.cameronstanley.javatetris.client.model.MenuItem;
 import com.cameronstanley.javatetris.client.model.OnlineMultiplayerGame;
@@ -65,13 +68,14 @@ public class JavaTetrisController {
 		state = JavaTetrisControllerState.MAINMENU;
 		
 		// Create a main menu
-		Menu mainMenu = new Menu();
-		mainMenu.addMenuItem(new MenuItem("Single Player", true));
-		mainMenu.addMenuItem(new MenuItem("Online Multiplayer", true));
-		mainMenu.addMenuItem(new MenuItem("Continue", false));
-		mainMenu.addMenuItem(new MenuItem("Exit", true));
-		MainMenuInputController mainMenuInputController = new MainMenuInputController(mainMenu);
-		MainMenuView mainMenuView = new MainMenuView(mainMenu);
+		MainMenu mainMenu = new MainMenu();
+		Menu menu = new Menu();
+		menu.addMenuItem(new MenuItem("Single Player", true));
+		menu.addMenuItem(new MenuItem("Online Multiplayer", true));
+		menu.addMenuItem(new MenuItem("Continue", false));
+		menu.addMenuItem(new MenuItem("Quit", true));
+		MainMenuInputController mainMenuInputController = new MainMenuInputController(menu);
+		MainMenuView mainMenuView = new MainMenuView(mainMenu, menu);
 		
 		// Create a single player game
 		SinglePlayerGame singlePlayerGame = new SinglePlayerGame();
@@ -92,14 +96,23 @@ public class JavaTetrisController {
 		while (!Display.isCloseRequested()) {			
 			switch(state) {
 			case MAINMENU:
+				mainMenu.updateState(timer.getDelta());
 				mainMenuInputController.pollInput();
 				mainMenuView.render();
 				timer.init();
 				break;
 			case STARTSINGLEPLAYERGAME:
+				if (singlePlayerGame.getIsActive()) {
+					int verify = JOptionPane.showConfirmDialog(null, "Are you sure you want to start a new game?\nCurrent single player game will be lost.", "Are you sure?", JOptionPane.YES_NO_OPTION);
+					if (verify == JOptionPane.NO_OPTION) {
+						state = JavaTetrisControllerState.MAINMENU;
+						continue;
+					}
+				}
+				
 				singlePlayerGame.newGame();
 				state = JavaTetrisControllerState.PLAYSINGLEPLAYERGAME;
-				mainMenu.getMenuItems().get(2).setEnabled(true);
+				menu.getMenuItems().get(2).setEnabled(true);
 				timer.init();
 			case PLAYSINGLEPLAYERGAME:
 				singlePlayerGame.updateState(timer.getDelta());

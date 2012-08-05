@@ -36,7 +36,7 @@ public class SinglePlayerGameView implements View {
 	 */
 	public SinglePlayerGameView(SinglePlayerGame singlePlayerGame) {
 		this.singlePlayerGame = singlePlayerGame;
-		Font awtFont = new Font("Lucida Grande", Font.BOLD, 18);
+		Font awtFont = new Font("Tahoma" , Font.BOLD, 18);
 		statisticsFont = new TrueTypeFont(awtFont, true);
 	}
 	
