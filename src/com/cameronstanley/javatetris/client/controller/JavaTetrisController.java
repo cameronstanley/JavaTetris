@@ -102,6 +102,7 @@ public class JavaTetrisController {
 				timer.init();
 				break;
 			case STARTSINGLEPLAYERGAME:
+				// Make user confirms they are going to lose current progress
 				if (singlePlayerGame.getIsActive()) {
 					int verify = JOptionPane.showConfirmDialog(null, "Are you sure you want to start a new game?\nCurrent single player game will be lost.", "Are you sure?", JOptionPane.YES_NO_OPTION);
 					if (verify == JOptionPane.NO_OPTION) {
